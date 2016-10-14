@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Now Playing</string>
+    <string name="movie_poster">Movie Poster</string>
+    <string name="movie_backdrop">Movie Backdrop</string>
+    <string name="play_trailer">Play Trailer</string>
+    <string name="movie_rating">Movie rating</string>
+</resources>
