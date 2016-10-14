@@ -39,13 +39,15 @@ The following **bonus** features are implemented:
 
 The following **additional** features are implemented:
 
-* [ ] List anything else that you can get done to improve the app functionality!
+* [*] List anything else that you can get done to improve the app functionality!
+  * [*] If the user does not have youtube installed or api key not defined, then launch trailer using browser.
+  * [*] If user has Youtube app, then we will either use youtube app or the youtube view player to play trailer.
 
 ## Video Walkthrough
 
 Here's a walkthrough of implemented user stories:
 
-<img src='http://i.imgur.com/link/to/your/gif/file.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
+<img src='https://github.com/santhoshsachindran/MovieFlick/blob/master/Project1.gif' />
 
 GIF created with [LiceCap](http://www.cockos.com/licecap/).
 
