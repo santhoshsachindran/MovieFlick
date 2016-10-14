@@ -8,40 +8,40 @@ Time spent: 7 hours spent in total
 
 The following **required** functionality is completed:
 
-* [*] User can **scroll through current movies** from the Movie Database API
-* [*] Layout is optimized with the [ViewHolder](http://guides.codepath.com/android/Using-an-ArrayAdapter-with-ListView#improving-performance-with-the-viewholder-pattern) pattern.
-* [*] For each movie displayed, user can see the following details:
+* [x] User can **scroll through current movies** from the Movie Database API
+* [x] Layout is optimized with the [ViewHolder](http://guides.codepath.com/android/Using-an-ArrayAdapter-with-ListView#improving-performance-with-the-viewholder-pattern) pattern.
+* [x] For each movie displayed, user can see the following details:
   * [ ] Title, Poster Image, Overview (Portrait mode)
   * [ ] Title, Backdrop Image, Overview (Landscape mode)
-  * [*] Using RecyclerView, GridLayoutManager to show movies in GridView, only the image type loaded for Potrait (poster) vs Landscape (backdrop) is different. Both
+  * [x] Using RecyclerView, GridLayoutManager to show movies in GridView, only the image type loaded for Potrait (poster) vs Landscape (backdrop) is different. Both
         has an image and title, just the type of image is different.
-  * [*] User can go to detailed view to view every other information
+  * [x] User can go to detailed view to view every other information
 
 The following **optional** features are implemented:
 
-* [*] User can **pull-to-refresh** popular stream to get the latest movies.
-* [*] Display a nice default [placeholder graphic](http://guides.codepath.com/android/Displaying-Images-with-the-Picasso-Library#configuring-picasso) for each image during loading.
-* [*] Improved the user interface through styling and coloring.
+* [x] User can **pull-to-refresh** popular stream to get the latest movies.
+* [x] Display a nice default [placeholder graphic](http://guides.codepath.com/android/Displaying-Images-with-the-Picasso-Library#configuring-picasso) for each image during loading.
+* [x] Improved the user interface through styling and coloring.
 
 The following **bonus** features are implemented:
 
-* [*] Allow user to view details of the movie including ratings and popularity within a separate activity or dialog fragment.
+* [x] Allow user to view details of the movie including ratings and popularity within a separate activity or dialog fragment.
 * [ ] When viewing a popular movie (i.e. a movie voted for more than 5 stars) the video should show the full backdrop image as the layout.  Uses [Heterogenous ListViews](http://guides.codepath.com/android/Implementing-a-Heterogenous-ListView) or [Heterogenous RecyclerView](http://guides.codepath.com/android/Heterogenous-Layouts-inside-RecyclerView) to show different layouts.
-	* [*] Heterogenous RecyclerView used to have 2 different layouts for popular and less popular movies.
-* [*] Allow video trailers to be played in full-screen using the YouTubePlayerView.
-    * [*] Overlay a play icon for videos that can be played.
+  * [x] Heterogenous RecyclerView used to have 2 different layouts for popular and less popular movies.
+* [x] Allow video trailers to be played in full-screen using the YouTubePlayerView.
+    * [x] Overlay a play icon for videos that can be played.
     * [ ] More popular movies should start a separate activity that plays the video immediately.
-    * [*] More popular movies also start Details page for more information and starting a video.
-    * [*] Less popular videos rely on the detail page should show ratings and a YouTube preview.
-* [*] Apply the popular [Butterknife annotation library](http://guides.codepath.com/android/Reducing-View-Boilerplate-with-Butterknife) to reduce boilerplate code.
-* [*] Apply rounded corners for the poster or background images using [Picasso transformations](https://guides.codepath.com/android/Displaying-Images-with-the-Picasso-Library#other-transformations)
-* [*] Replaced android-async-http network client with the popular [OkHttp](http://guides.codepath.com/android/Using-OkHttp) or [Volley](http://guides.codepath.com/android/Networking-with-the-Volley-Library) networking libraries.
+    * [x] More popular movies also start Details page for more information and starting a video.
+    * [x] Less popular videos rely on the detail page should show ratings and a YouTube preview.
+* [x] Apply the popular [Butterknife annotation library](http://guides.codepath.com/android/Reducing-View-Boilerplate-with-Butterknife) to reduce boilerplate code.
+* [x] Apply rounded corners for the poster or background images using [Picasso transformations](https://guides.codepath.com/android/Displaying-Images-with-the-Picasso-Library#other-transformations)
+* [x] Replaced android-async-http network client with the popular [OkHttp](http://guides.codepath.com/android/Using-OkHttp) or [Volley](http://guides.codepath.com/android/Networking-with-the-Volley-Library) networking libraries.
 
 The following **additional** features are implemented:
 
-* [*] List anything else that you can get done to improve the app functionality!
-  * [*] If the user does not have youtube installed or api key not defined, then launch trailer using browser.
-  * [*] If user has Youtube app, then we will either use youtube app or the youtube view player to play trailer.
+* [x] List anything else that you can get done to improve the app functionality!
+  * [x] If the user does not have youtube installed or api key not defined, then launch trailer using browser.
+  * [x] If user has Youtube app, then we will either use youtube app or the youtube view player to play trailer.
 
 ## Video Walkthrough
 
