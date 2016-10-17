@@ -1,4 +1,4 @@
-package com.santhosh.codepath.movieflicks;
+package com.santhosh.codepath.movieflicks.custom;
 
 import android.os.Parcel;
 import android.os.Parcelable;

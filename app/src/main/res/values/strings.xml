@@ -4,4 +4,6 @@
     <string name="movie_backdrop">Movie Backdrop</string>
     <string name="play_trailer">Play Trailer</string>
     <string name="movie_rating">Movie rating</string>
+    <string name="no_network">No network available ! Please check internet connection and try again later</string>
+    <string name="no_data_available">No data available from server, please try again later</string>
 </resources>

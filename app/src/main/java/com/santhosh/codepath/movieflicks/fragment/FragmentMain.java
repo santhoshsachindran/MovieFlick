@@ -1,4 +1,18 @@
-package com.santhosh.codepath.movieflicks;
+package com.santhosh.codepath.movieflicks.fragment;
+
+import static com.santhosh.codepath.movieflicks.R.id.swipeContainerEmpty;
+import static com.santhosh.codepath.movieflicks.utils.UtilsAndConstants.BACKDROP_PATH;
+import static com.santhosh.codepath.movieflicks.utils.UtilsAndConstants.CURRENT_STATE;
+import static com.santhosh.codepath.movieflicks.utils.UtilsAndConstants.FETCH_MOVIES_URL;
+import static com.santhosh.codepath.movieflicks.utils.UtilsAndConstants.MOVIE_ID;
+import static com.santhosh.codepath.movieflicks.utils.UtilsAndConstants.OVERVIEW;
+import static com.santhosh.codepath.movieflicks.utils.UtilsAndConstants.PARCELABLE;
+import static com.santhosh.codepath.movieflicks.utils.UtilsAndConstants.POSTER_PATH;
+import static com.santhosh.codepath.movieflicks.utils.UtilsAndConstants.RELEASE_DATE;
+import static com.santhosh.codepath.movieflicks.utils.UtilsAndConstants.RESULTS;
+import static com.santhosh.codepath.movieflicks.utils.UtilsAndConstants.TITLE;
+import static com.santhosh.codepath.movieflicks.utils.UtilsAndConstants.VOTE_AVERAGE;
+import static com.santhosh.codepath.movieflicks.utils.UtilsAndConstants.networkAvailable;
 
 import android.app.Fragment;
 import android.app.LoaderManager;
@@ -15,6 +29,15 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.santhosh.codepath.movieflicks.R;
+import com.santhosh.codepath.movieflicks.activity.DetailsActivity;
+import com.santhosh.codepath.movieflicks.custom.Movie;
+import com.santhosh.codepath.movieflicks.utils.UtilsAndConstants;
+import com.santhosh.codepath.movieflicks.views.RecyclerViewAdapter;
+import com.santhosh.codepath.movieflicks.views.RecyclerViewItemClickListener;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -40,6 +63,10 @@ public class FragmentMain extends Fragment implements LoaderManager.LoaderCallba
     RecyclerView mRecyclerView;
     @BindView(R.id.swipeContainer)
     SwipeRefreshLayout mSwipeContainer;
+    @BindView(R.id.empty_view)
+    TextView mEmptyView;
+    @BindView(swipeContainerEmpty)
+    SwipeRefreshLayout mSwipeContainerEmpty;
 
     private List<Movie> movieList;
     private RecyclerView.Adapter mRecyclerViewAdapter;
@@ -62,15 +89,40 @@ public class FragmentMain extends Fragment implements LoaderManager.LoaderCallba
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_main, container, false);
         unbinder = ButterKnife.bind(this, view);
+
         mRecyclerView.setHasFixedSize(true);
 
         mRecyclerLayoutManager = new GridLayoutManager(getContext(), 3);
         mRecyclerView.setLayoutManager(mRecyclerLayoutManager);
 
+        mSwipeContainerEmpty.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                if (networkAvailable(getContext())) {
+                    getLoaderManager().restartLoader(0, null, FragmentMain.this);
+                } else {
+                    mSwipeContainerEmpty.setRefreshing(false);
+                    Toast.makeText(getContext(), R.string.no_network,
+                            Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        mSwipeContainerEmpty.setColorSchemeResources(android.R.color.holo_blue_bright,
+                android.R.color.holo_green_light,
+                android.R.color.holo_orange_light,
+                android.R.color.holo_red_light);
+
         mSwipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                getLoaderManager().restartLoader(0, null, FragmentMain.this);
+                if (networkAvailable(getContext())) {
+                    getLoaderManager().restartLoader(0, null, FragmentMain.this);
+                } else {
+                    mSwipeContainer.setRefreshing(false);
+                    Toast.makeText(getContext(), R.string.no_network,
+                            Toast.LENGTH_SHORT).show();
+                }
             }
         });
         mSwipeContainer.setColorSchemeResources(android.R.color.holo_blue_bright,
@@ -84,7 +136,7 @@ public class FragmentMain extends Fragment implements LoaderManager.LoaderCallba
                     @Override
                     public void onItemClick(View v, int position) {
                         Intent intent = new Intent(getContext(), DetailsActivity.class);
-                        intent.putExtra("PARCELABLE", movieList.get(position));
+                        intent.putExtra(PARCELABLE, movieList.get(position));
                         startActivity(intent);
                     }
                 }));
@@ -92,8 +144,17 @@ public class FragmentMain extends Fragment implements LoaderManager.LoaderCallba
         mRecyclerViewAdapter = new RecyclerViewAdapter(movieList);
         mRecyclerView.setAdapter(mRecyclerViewAdapter);
 
-        getLoaderManager().initLoader(0, null, this);
-
+        if (!UtilsAndConstants.networkAvailable(getContext())) {
+            mSwipeContainerEmpty.setVisibility(View.VISIBLE);
+            mEmptyView.setVisibility(View.VISIBLE);
+            mEmptyView.setText(getString(R.string.no_network));
+            mRecyclerView.setVisibility(View.GONE);
+        } else {
+            mSwipeContainerEmpty.setVisibility(View.GONE);
+            mEmptyView.setVisibility(View.GONE);
+            mRecyclerView.setVisibility(View.VISIBLE);
+            getLoaderManager().initLoader(0, null, this);
+        }
         return view;
     }
 
@@ -102,16 +163,20 @@ public class FragmentMain extends Fragment implements LoaderManager.LoaderCallba
         super.onViewStateRestored(savedInstanceState);
 
         if (savedInstanceState != null) {
-            Parcelable savedRecyclerLayoutState = savedInstanceState.getParcelable("CURRENT_STATE");
-            mRecyclerView.getLayoutManager().onRestoreInstanceState(savedRecyclerLayoutState);
+            Parcelable savedRecyclerLayoutState = savedInstanceState.getParcelable(CURRENT_STATE);
+            if (mRecyclerView != null) {
+                mRecyclerView.getLayoutManager().onRestoreInstanceState(savedRecyclerLayoutState);
+            }
         }
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putParcelable("CURRENT_STATE",
-                mRecyclerView.getLayoutManager().onSaveInstanceState());
+        if (mRecyclerView != null) {
+            outState.putParcelable(CURRENT_STATE,
+                    mRecyclerView.getLayoutManager().onSaveInstanceState());
+        }
     }
 
     @Override
@@ -128,11 +193,24 @@ public class FragmentMain extends Fragment implements LoaderManager.LoaderCallba
         movieList = data;
 
         if (data != null) {
+            mSwipeContainerEmpty.setVisibility(View.GONE);
+            mEmptyView.setVisibility(View.GONE);
+            mRecyclerView.setVisibility(View.VISIBLE);
             mRecyclerView.setAdapter(new RecyclerViewAdapter(movieList));
             mRecyclerView.invalidate();
+        } else {
+            if (networkAvailable(getContext())) {
+                mEmptyView.setText(getString(R.string.no_data_available));
+            } else {
+                mEmptyView.setText(getString(R.string.no_network));
+            }
+            mSwipeContainerEmpty.setVisibility(View.VISIBLE);
+            mEmptyView.setVisibility(View.VISIBLE);
+            mRecyclerView.setVisibility(View.GONE);
         }
 
         mSwipeContainer.setRefreshing(false);
+        mSwipeContainerEmpty.setRefreshing(false);
     }
 
     @Override
@@ -144,10 +222,6 @@ public class FragmentMain extends Fragment implements LoaderManager.LoaderCallba
     }
 
     private static class FetchMovies extends AsyncTaskLoader<List<Movie>> {
-        private final String FETCH_URL =
-                "https://api.themoviedb"
-                        + ".org/3/movie/now_playing?api_key=a07e22bc18f5cb106bfe4cc1f83ad8ed";
-
         FetchMovies(Context context) {
             super(context);
         }
@@ -163,7 +237,7 @@ public class FragmentMain extends Fragment implements LoaderManager.LoaderCallba
             Response response;
 
             Request request = new Request.Builder()
-                    .url(FETCH_URL)
+                    .url(FETCH_MOVIES_URL)
                     .build();
 
             try {
@@ -180,17 +254,17 @@ public class FragmentMain extends Fragment implements LoaderManager.LoaderCallba
             List<Movie> movieList = new ArrayList<>();
 
             JSONObject jsonObject = new JSONObject(body);
-            JSONArray results = jsonObject.optJSONArray("results");
+            JSONArray results = jsonObject.optJSONArray(RESULTS);
 
             for (int i = 0; i < results.length(); i++) {
                 JSONObject eachResult = (JSONObject) results.get(i);
-                String poster = eachResult.optString("poster_path");
-                String overview = eachResult.optString("overview");
-                String release = eachResult.optString("release_date");
-                int id = eachResult.optInt("id");
-                String title = eachResult.optString("title");
-                String backdrop = eachResult.optString("backdrop_path");
-                double rating = eachResult.optDouble("vote_average");
+                String poster = eachResult.optString(POSTER_PATH);
+                String overview = eachResult.optString(OVERVIEW);
+                String release = eachResult.optString(RELEASE_DATE);
+                int id = eachResult.optInt(MOVIE_ID);
+                String title = eachResult.optString(TITLE);
+                String backdrop = eachResult.optString(BACKDROP_PATH);
+                double rating = eachResult.optDouble(VOTE_AVERAGE);
 
                 movieList.add(new Movie(poster, overview, release, id, title, backdrop, rating));
             }

@@ -2,7 +2,7 @@
 
 NowPlaying shows the latest movies currently playing in theaters. The app utilizes the Movie Database API to display images and basic information about these movies to the user.
 
-Time spent: 7 hours spent in total
+Time spent: 9 hours spent in total
 
 ## User Stories
 
@@ -42,6 +42,7 @@ The following **additional** features are implemented:
 * [x] List anything else that you can get done to improve the app functionality!
   * [x] If the user does not have youtube installed or api key not defined, then launch trailer using browser.
   * [x] If user has Youtube app, then we will either use youtube app or the youtube view player to play trailer.
+  * [x] If no internet connectivity show the warning message to user.
 
 ## Video Walkthrough
 

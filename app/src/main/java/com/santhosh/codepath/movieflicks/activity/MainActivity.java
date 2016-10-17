@@ -1,7 +1,9 @@
-package com.santhosh.codepath.movieflicks;
+package com.santhosh.codepath.movieflicks.activity;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+
+import com.santhosh.codepath.movieflicks.R;
 
 public class MainActivity extends AppCompatActivity {
 

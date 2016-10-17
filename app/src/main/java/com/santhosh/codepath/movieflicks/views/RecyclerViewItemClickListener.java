@@ -1,4 +1,4 @@
-package com.santhosh.codepath.movieflicks;
+package com.santhosh.codepath.movieflicks.views;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;

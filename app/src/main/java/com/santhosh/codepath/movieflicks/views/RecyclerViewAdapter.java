@@ -1,5 +1,9 @@
-package com.santhosh.codepath.movieflicks;
+package com.santhosh.codepath.movieflicks.views;
 
+
+import static com.santhosh.codepath.movieflicks.utils.UtilsAndConstants.BASE_IMAGE_PATH;
+import static com.santhosh.codepath.movieflicks.utils.UtilsAndConstants.HIGH_RATED;
+import static com.santhosh.codepath.movieflicks.utils.UtilsAndConstants.NOT_HIGH_RATED;
 
 import android.content.res.Configuration;
 import android.support.v7.widget.RecyclerView;
@@ -9,6 +13,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.santhosh.codepath.movieflicks.custom.Movie;
+import com.santhosh.codepath.movieflicks.R;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -20,8 +26,6 @@ import jp.wasabeef.picasso.transformations.RoundedCornersTransformation;
 public class RecyclerViewAdapter extends
         RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private List<Movie> mMovies;
-    private final int HIGH_RATED = 0;
-    private final int NOT_HIGH_RATED = 1;
 
     public RecyclerViewAdapter(List<Movie> movies) {
         mMovies = movies;
@@ -55,7 +59,7 @@ public class RecyclerViewAdapter extends
         switch (holder.getItemViewType()) {
             case HIGH_RATED:
                 Picasso.with(((PopularMovieHolder) holder).popularMoviePoster.getContext())
-                        .load("https://image.tmdb.org/t/p/w500" + movie.getBackdropPath())
+                        .load(BASE_IMAGE_PATH + movie.getBackdropPath())
                         .fit()
                         .centerCrop()
                         .transform(new RoundedCornersTransformation(10, 10))
@@ -68,9 +72,9 @@ public class RecyclerViewAdapter extends
 
                 if (((MovieHolder) holder).moviePoster.getContext().getResources()
                         .getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                    imagePath = "https://image.tmdb.org/t/p/w500" + movie.getBackdropPath();
+                    imagePath = BASE_IMAGE_PATH + movie.getBackdropPath();
                 } else {
-                    imagePath = "https://image.tmdb.org/t/p/w500" + movie.getPosterPath();
+                    imagePath = BASE_IMAGE_PATH + movie.getPosterPath();
                 }
                 Picasso.with(((MovieHolder) holder).moviePoster.getContext())
                         .load(imagePath)

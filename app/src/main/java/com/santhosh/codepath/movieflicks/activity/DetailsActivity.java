@@ -1,4 +1,20 @@
-package com.santhosh.codepath.movieflicks;
+package com.santhosh.codepath.movieflicks.activity;
+
+import static com.santhosh.codepath.movieflicks.utils.UtilsAndConstants.API_KEY;
+import static com.santhosh.codepath.movieflicks.utils.UtilsAndConstants.API_KEY_KEY;
+import static com.santhosh.codepath.movieflicks.utils.UtilsAndConstants.BASE_IMAGE_PATH;
+import static com.santhosh.codepath.movieflicks.utils.UtilsAndConstants.FETCH_TRAILER_URL;
+import static com.santhosh.codepath.movieflicks.utils.UtilsAndConstants.FORCE_FULLSCREEN;
+import static com.santhosh.codepath.movieflicks.utils.UtilsAndConstants.PARCELABLE;
+import static com.santhosh.codepath.movieflicks.utils.UtilsAndConstants.SOURCE;
+import static com.santhosh.codepath.movieflicks.utils.UtilsAndConstants.TRAILER;
+import static com.santhosh.codepath.movieflicks.utils.UtilsAndConstants.TRAILER_URL;
+import static com.santhosh.codepath.movieflicks.utils.UtilsAndConstants.TYPE;
+import static com.santhosh.codepath.movieflicks.utils.UtilsAndConstants.YOUTUBE;
+import static com.santhosh.codepath.movieflicks.utils.UtilsAndConstants.YOUTUBE_HEADER;
+import static com.santhosh.codepath.movieflicks.utils.UtilsAndConstants.YOUTUBE_LINK;
+import static com.santhosh.codepath.movieflicks.utils.UtilsAndConstants.YOUTUBE_URL;
+import static com.santhosh.codepath.movieflicks.utils.UtilsAndConstants.networkAvailable;
 
 import android.app.LoaderManager;
 import android.content.ActivityNotFoundException;
@@ -9,13 +25,16 @@ import android.content.Loader;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.santhosh.codepath.movieflicks.R;
+import com.santhosh.codepath.movieflicks.custom.Movie;
+import com.santhosh.codepath.movieflicks.views.YoutubePlayer;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
@@ -34,12 +53,6 @@ import okhttp3.Response;
 
 public class DetailsActivity extends AppCompatActivity implements
         LoaderManager.LoaderCallbacks<String> {
-    private static final String YOUTUBE_URL = "https://www.youtube.com/watch?v=";
-    private static final String FETCH_URL = "https://api.themoviedb.org/3/movie/";
-    private static final String TRAILER_URL = "/trailers?api_key=a07e22bc18f5cb106bfe4cc1f83ad8ed";
-    // TODO : Add own api_key to test this feature;
-    private static final String API_KEY = "";
-
     private String mTrailerUrl;
     private static int movieId;
 
@@ -67,11 +80,13 @@ public class DetailsActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_details);
         ButterKnife.bind(this);
 
-        Movie movie = getIntent().getParcelableExtra("PARCELABLE");
+        Movie movie = getIntent().getParcelableExtra(PARCELABLE);
 
         String title = movie.getTitle();
         movieId = movie.getMovieId();
-        getLoaderManager().initLoader(0, null, this);
+        if (networkAvailable(this)) {
+            getLoaderManager().initLoader(0, null, this);
+        }
         setTitle(title);
 
         mMovieTitle.setText(title);
@@ -80,14 +95,14 @@ public class DetailsActivity extends AppCompatActivity implements
         mMovieRating.setRating((float) movie.getRating());
 
         Picasso.with(this)
-                .load("https://image.tmdb.org/t/p/w500" + movie.getPosterPath())
+                .load(BASE_IMAGE_PATH + movie.getPosterPath())
                 .fit()
                 .centerCrop()
                 .transform(new RoundedCornersTransformation(10, 10))
                 .placeholder(R.drawable.placeholder)
                 .into(mMoviePoster);
         Picasso.with(this)
-                .load("https://image.tmdb.org/t/p/w500" + movie.getBackdropPath())
+                .load(BASE_IMAGE_PATH + movie.getBackdropPath())
                 .fit()
                 .centerCrop()
                 .transform(new RoundedCornersTransformation(10, 10))
@@ -97,24 +112,27 @@ public class DetailsActivity extends AppCompatActivity implements
 
     @OnClick(R.id.play_button)
     public void onPlayClick(View view) {
-        if (API_KEY.equals("")) {
-            Log.d("Test", "Api key is empty");
-            Intent youtubeIntent = new Intent(Intent.ACTION_VIEW,
-                    Uri.parse("vnd.youtube:" + mTrailerUrl));
-            youtubeIntent.putExtra("force_fullscreen", true);
-            Intent webIntent = new Intent(Intent.ACTION_VIEW,
-                    Uri.parse(YOUTUBE_URL + mTrailerUrl));
+        if (networkAvailable(this)) {
+            if (API_KEY.equals("")) {
+                Intent youtubeIntent = new Intent(Intent.ACTION_VIEW,
+                        Uri.parse(YOUTUBE_HEADER + mTrailerUrl));
+                youtubeIntent.putExtra(FORCE_FULLSCREEN, true);
+                Intent webIntent = new Intent(Intent.ACTION_VIEW,
+                        Uri.parse(YOUTUBE_URL + mTrailerUrl));
 
-            try {
-                startActivity(youtubeIntent);
-            } catch (ActivityNotFoundException e) {
-                startActivity(webIntent);
+                try {
+                    startActivity(youtubeIntent);
+                } catch (ActivityNotFoundException e) {
+                    startActivity(webIntent);
+                }
+            } else {
+                Intent intent = new Intent(this, YoutubePlayer.class);
+                intent.putExtra(API_KEY_KEY, API_KEY);
+                intent.putExtra(YOUTUBE_LINK, mTrailerUrl);
+                startActivity(intent);
             }
         } else {
-            Intent intent = new Intent(this, YoutubePlayer.class);
-            intent.putExtra("API_KEY", API_KEY);
-            intent.putExtra("YOUTUBE_LINK", mTrailerUrl);
-            startActivity(intent);
+            Toast.makeText(this, R.string.no_network, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -154,7 +172,7 @@ public class DetailsActivity extends AppCompatActivity implements
             Response response;
 
             Request request = new Request.Builder()
-                    .url(FETCH_URL + movieId + TRAILER_URL)
+                    .url(FETCH_TRAILER_URL + movieId + TRAILER_URL)
                     .build();
 
             try {
@@ -169,14 +187,14 @@ public class DetailsActivity extends AppCompatActivity implements
 
         private String getTrailerUrl(String jsonFormat) throws JSONException {
             JSONObject root = new JSONObject(jsonFormat);
-            JSONArray results = root.optJSONArray("youtube");
+            JSONArray results = root.optJSONArray(YOUTUBE);
 
             for (int i = 0; i < results.length(); i++) {
                 JSONObject eachResult = results.optJSONObject(i);
                 if (eachResult != null) {
-                    String type = eachResult.optString("type");
-                    if (type.equalsIgnoreCase("Trailer")) {
-                        return eachResult.optString("source");
+                    String type = eachResult.optString(TYPE);
+                    if (type.equalsIgnoreCase(TRAILER)) {
+                        return eachResult.optString(SOURCE);
                     }
                 }
             }
